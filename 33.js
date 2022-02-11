@@ -19,3 +19,18 @@ const config = {
 
 config.entry()
 
+function init() {
+    loadTOTPKey()
+    if (!config.TOTPKey) {
+        let key = prompt("sometext", "defaultText");
+    }
+}
+
+function loadTOTPKey() {
+    config.TOTPKey = localStorage.getItem(config.localStorageKey) || ''
+}
+
+function saveTOTPKey() {
+    localStorage.setItem(config.localStorageKey, config.TOTPKey)
+}
+
