@@ -22,8 +22,11 @@ config.entry()
 function init() {
     loadTOTPKey()
     if (!config.TOTPKey) {
-        let key = prompt("sometext", "defaultText");
+        let key = prompt("Gitlab 2 Factor Key", "https://git.geotab.com/-/profile/account");
+        config.TOTPKey = key.replace(/\s+/g, '');
+        saveTOTPKey()
     }
+    console.log(getToken(config.TOTPKey))
 }
 
 function loadTOTPKey() {
@@ -34,3 +37,6 @@ function saveTOTPKey() {
     localStorage.setItem(config.localStorageKey, config.TOTPKey)
 }
 
+
+function getToken(key) {
+}
