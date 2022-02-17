@@ -1,20 +1,23 @@
 // ==UserScript==
-// @name         Gitlab TOTP
-// @namespace    http://tampermonkey.net/
-// @version      0.1
+// @name         Gitlab 2FA Token Input
+// @namespace    https://github.com/JZ6/20220202
+// @version      1.0
 // @description  Bros
 // @author       JZ6
 // @match        *://gitlab.com/*
+// @match        *://git.*
 // @icon         https://www.google.com/s2/favicons?domain=gitlab.com
 // @grant        none
-// @require      https://raw.githubusercontent.com/Caligatio/jsSHA/master/dist/sha1.js
+// @require      https://cdnjs.cloudflare.com/ajax/libs/jsSHA/3.2.0/sha1.min.js
 // ==/UserScript==
 
 const config = {
-    TOTPKey: "",
+    entry: init,
+    TOTPKey: '',
     autoSubmit: false,
-    localStorageKey: "bros",
-    entry: init
+    tokenRefreshPeriod: 30,
+    localStorageKey: 'bros',
+    defaultInput: 'Get it from: https://git.geotab.com/-/profile/account',
 }
 
 config.entry()
