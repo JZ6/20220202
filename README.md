@@ -6,7 +6,7 @@ Surprise for Sushi!
 ## Installation
 [First install a user script manager such as Tampermonkey.](https://greasyfork.org/en) 
 
-[Then Install this script from Greasyfork.](https://greasyfork.org/scripts/39084-surprise-for-sushi)
+[Then Install this script from Greasyfork.](https://greasyfork.org/en/scripts/440222-gitlab-2fa-token-input)
 
 ## Usage
 Go to your gitlab profile/account page:

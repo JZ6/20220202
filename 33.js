@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Gitlab 2FA Token Input
+// @name         Gitlab 2FA Token Auto Fill 
 // @namespace    https://github.com/JZ6/20220202
 // @version      1.0
 // @description  Bros
@@ -23,11 +23,18 @@ const config = {
 config.entry()
 
 function init() {
+
+    const TOTPInput = document.getElementById('user_otp_attempt')
+    if (!TOTPInput) return
+
     loadTOTPKey()
-    if (!config.TOTPKey) {
-        let key = prompt("Gitlab 2 Factor Key", "https://git.geotab.com/-/profile/account");
-        config.TOTPKey = key.replace(/\s+/g, '');
-        saveTOTPKey()
+
+    const TOTPToken = get2FAToken(config.TOTPKey)
+    console.log(TOTPToken)
+    TOTPInput.value = TOTPToken
+    if (config.autoSubmit) {
+        const submitButton = document.querySelector("div.prepend-top-20 input[name='commit']")
+        submitButton.click()
     }
     console.log(getToken(config.TOTPKey))
 }
@@ -41,5 +48,25 @@ function saveTOTPKey() {
 }
 
 
-function getToken(key) {
+function getHexadecimalKey(TOTPKey) {
+
+    const base32chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
+    cleanKey = TOTPKey.replace(/\s+/g, '').replace(/=+$/, '')
+
+    let binary = ''
+    for (const c of cleanKey) {
+        let val = base32chars.indexOf(c.toUpperCase())
+        binary += paddingFill(val.toString(2), 5)
+    }
+
+    let hexadecimalKey = ''
+    for (let i = 0; i + 8 <= binary.length; i += 8) {
+        const byte = binary.slice(i, i + 8)
+        const hexByte = parseInt(byte, 2).toString(16)
+        hexadecimalKey += paddingFill(hexByte, 2)
+    }
+
+    return hexadecimalKey
+}
+
 }
