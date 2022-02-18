@@ -6,7 +6,7 @@ Surprise for Sushi!
 ## Installation
 [First install a user script manager such as Tampermonkey.](https://greasyfork.org/en) 
 
-[Then Install this script from Greasyfork.](https://greasyfork.org/en/scripts/440222-gitlab-2fa-token-input)
+[Then Install this script from Greasyfork.](https://greasyfork.org/en/scripts/440263-gitlab-2fa-token-auto-fill)
 
 ## Usage
 Go to your gitlab profile/account page:
