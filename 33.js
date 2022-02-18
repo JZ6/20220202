@@ -5,7 +5,7 @@
 // @description  Bros
 // @author       JZ6
 // @match        *://gitlab.com/*
-// @match        *://git.*
+// @include      *://git.*.com/*
 // @icon         https://www.google.com/s2/favicons?domain=gitlab.com
 // @grant        none
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jsSHA/3.2.0/sha1.min.js
@@ -32,11 +32,14 @@ function init() {
     const TOTPToken = get2FAToken(config.TOTPKey)
     console.log(TOTPToken)
     TOTPInput.value = TOTPToken
+
     if (config.autoSubmit) {
         const submitButton = document.querySelector("div.prepend-top-20 input[name='commit']")
         submitButton.click()
     }
-    console.log(getToken(config.TOTPKey))
+
+    // data-qa-selector="otp_secret_content"
+
 }
 
 function loadTOTPKey() {
@@ -64,6 +67,22 @@ function promptKeyInput() {
     saveTOTPKey()
 }
 
+function get2FAToken(TOTPKey) {
+
+    const HEX = 'HEX'
+    const hexSHA = new jsSHA('SHA-1', HEX)
+
+    const hexadecimalKey = getHexadecimalKey(TOTPKey)
+    hexSHA.setHMACKey(hexadecimalKey, HEX)
+
+    const hexTime = getHexTime()
+    hexSHA.update(hexTime)
+
+
+    const HMACKey = hexSHA.getHMAC(HEX)
+    return getTOTPToken(HMACKey)
+}
+
 function getHexadecimalKey(TOTPKey) {
 
     const base32chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
@@ -86,4 +105,33 @@ function getHexadecimalKey(TOTPKey) {
 }
 
 function getHexTime() {
+    const currentSecond = Math.round(Date.now() / 1000.0)
+    const tokenRefreshTime = Math.floor(currentSecond / config.tokenRefreshPeriod)
+
+
+    let hexTime = Math.round(tokenRefreshTime).toString(16)
+
+    if (tokenRefreshTime < 15.5) {
+        hexTime = `0${hexTime}`
+    }
+
+    return paddingFill(hexTime, 16)
+}
+
+function getTOTPToken(HMACKey) {
+    const offset = parseInt(HMACKey.slice(-1), 16)
+    const hexOffset = parseInt(HMACKey.substr(offset * 2, 8), 16)
+
+    const mask = parseInt('7fffffff', 16)
+
+    const TOTPToken = String(hexOffset & mask)
+
+    return TOTPToken.slice(TOTPToken.length - 6)
+}
+
+function paddingFill(str, len) {
+    if (len < str.length - 1) {
+        return str
+    }
+    return Array(len - str.length + 1).join('0') + str
 }
