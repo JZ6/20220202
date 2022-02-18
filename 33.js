@@ -17,7 +17,7 @@ const config = {
     autoSubmit: false,
     tokenRefreshPeriod: 30,
     localStorageKey: 'bros',
-    defaultInput: 'Get it from: https://git.geotab.com/-/profile/account',
+    defaultInput: 'Get the key from your profile/account page!',
 }
 
 config.entry()
@@ -41,12 +41,28 @@ function init() {
 
 function loadTOTPKey() {
     config.TOTPKey = localStorage.getItem(config.localStorageKey) || ''
+    if (!config.TOTPKey || config.TOTPKey == 'null') {
+        promptKeyInput()
+        loadTOTPKey()
+        return
+    }
+
+    if (config.TOTPKey == config.defaultInput) {
+        alert('Please enter your 2FA Key from from your profile/account page!')
+        promptKeyInput()
+        loadTOTPKey()
+    }
 }
 
 function saveTOTPKey() {
     localStorage.setItem(config.localStorageKey, config.TOTPKey)
 }
 
+function promptKeyInput() {
+    let key = prompt('Enter your Gitlab Two Factor Key', config.defaultInput)
+    config.TOTPKey = key
+    saveTOTPKey()
+}
 
 function getHexadecimalKey(TOTPKey) {
 
@@ -69,4 +85,5 @@ function getHexadecimalKey(TOTPKey) {
     return hexadecimalKey
 }
 
+function getHexTime() {
 }
